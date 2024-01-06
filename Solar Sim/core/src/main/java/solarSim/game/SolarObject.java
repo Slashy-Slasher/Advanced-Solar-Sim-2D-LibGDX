@@ -36,6 +36,29 @@ SolarObject(double massx, Vector2 positionx, Vector2 velocityx, float radiusx, C
         projectedPositions.add(positionx.cpy());
     }
 
+    public SolarObject deepCopy()
+    {
+        double copiedMass = this.mass;
+        Vector2 copiedPosition = this.position.cpy();
+        Vector2 copiedVelocity = this.velocity.cpy();
+        float copiedRadius = this.radius;
+        Color copiedColor = this.color.cpy();
+        String copiedName = this.name;
+        boolean copiedStable = this.stable;
+
+        ArrayList<Vector2> copiedPreviousPositions = new ArrayList<>();
+        for (Vector2 prevPosition : this.previousPositions) {
+            copiedPreviousPositions.add(prevPosition.cpy());
+        }
+
+        ArrayList<Vector2> copiedProjectedPositions = new ArrayList<>();
+        for (Vector2 projPosition : this.projectedPositions) {
+            copiedProjectedPositions.add(projPosition.cpy());
+        }
+
+        return new SolarObject(copiedMass, copiedPosition, copiedVelocity, copiedRadius, copiedColor, copiedName, copiedStable);
+    }
+
     public Color getColor() {
         return color.cpy();
     }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class RendHelp
 {
+    Engine engine = new Engine();
     public void drawPlanet(SolarObject x, ShapeRenderer shapeRenderer, boolean debug)
     {
         shapeRenderer.begin(ShapeType.Filled);
@@ -22,13 +23,19 @@ public class RendHelp
     }
     public void drawProjections(SolarObject x, ShapeRenderer shapeRenderer)
     {
-        ArrayList<Vector2> projections = new ArrayList<>(x.getProjectedPositions());
+        ArrayList<Vector2> projections = engine.deepCopyVectorList(x.getProjectedPositions());
         shapeRenderer.begin(ShapeType.Line);
-        shapeRenderer.setColor(new Color(1f, 1f, 1f, 1));
-
+        //shapeRenderer.setColor(new Color(1f, 1f, 1f, 1));
+        shapeRenderer.setColor(x.getColor());
         for(int i = 1; i < projections.size(); i++)
         {
-            shapeRenderer.line(projections.get(i-1), projections.get(i));
+            if(i % 3 == 1)
+            {
+                if(i % 4 == 1)
+                {
+                    shapeRenderer.line(projections.get(i-1), projections.get(i));
+                }
+            }
         }
         shapeRenderer.end();
     }
@@ -42,8 +49,6 @@ public class RendHelp
             //System.out.println(x.getPreviousPositions().get(i-1));
         }
         shapeRenderer.end();
-        //System.out.println("Done");
-
     }
     public void drawSolarSystem(ArrayList<SolarObject> x, ShapeRenderer shapeRenderer, boolean debug)
     {
