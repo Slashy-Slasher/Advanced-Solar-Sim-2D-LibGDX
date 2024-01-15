@@ -20,8 +20,8 @@ public class Lwjgl3Launcher {
         configuration.setTitle("AdvancedSolarSimV2");
         configuration.useVsync(true);
         //// Limits FPS to the refresh rate of the currently active monitor.
-        configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
-        //configuration.setForegroundFPS(100);
+        //configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
+        configuration.setForegroundFPS(30);
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be
         //// useful for testing performance, but can also be very stressful to some hardware.
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.

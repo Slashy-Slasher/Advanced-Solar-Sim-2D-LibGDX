@@ -12,7 +12,7 @@ import java.util.Vector;
 
 public class Engine
 {
-    public Vector2 gravity(SolarObject p1, SolarObject p2, boolean projection)
+    public Vector2 gravity(SolarObject p1, SolarObject p2)
     {
         double G = .1f;
         double numerator = G * p1.getMass() * p2.getMass();
@@ -21,11 +21,10 @@ public class Engine
         Vector2 direction = p2.getPosition().cpy().sub(p1.getPosition()).nor();
         float forceX = gForce * direction.x;
         float forceY = gForce * direction.y;
-        //System.out.println(p1.getName() + " force's = (" + forceX + ", " + forceY + ") is projection: " + projection);
         return new Vector2(forceX, forceY);
     }
     //I'm looking for why
-    public void universalGravity(ArrayList<SolarObject> xplanetList, boolean isProjection)
+    public void universalGravity(ArrayList<SolarObject> xplanetList)
     {
         Vector2 totalForce;
         for (int i = 0; i < xplanetList.size(); i++)
@@ -37,13 +36,72 @@ public class Engine
                 {
                     if (i != j)
                     {
-                        totalForce.add(gravity(xplanetList.get(i), xplanetList.get(j), isProjection));
+                        totalForce.add(gravity(xplanetList.get(i), xplanetList.get(j)));
                     }
                 }
                 xplanetList.get(i).setVelocity(xplanetList.get(i).getVelocity().add(totalForce.cpy()).cpy());
             }
         }
     }
+
+    public float degreeCorrection(float degree)
+    {
+        degree = degree % 360;
+        if(degree < 0)
+        {
+            degree += 360;
+        }
+        return degree;
+    }
+
+    public Vector2 findQuadrant(float degree)
+    {
+        degree = Math.abs(degree);
+        if(degree >= 0.0 && degree < 90.0)
+        {
+            return new Vector2(1, 1);
+        }
+        else if(degree >= 90.0 && degree < 180.0)
+        {
+            return new Vector2(1, -1);
+        }
+        else if(degree >= 180.0 && degree < 270.0)
+        {
+            return new Vector2(-1, -1);
+        }
+        else
+        {
+            return new Vector2(-1, 1);
+        }
+    }
+
+    public Vector2 findAngle (float degree)
+    {
+        Vector2 quad = findQuadrant(degree);
+        float x = 0;
+        if(quad.equals(new Vector2(-1,1))  || quad.equals(new Vector2(1,-1)))   //Top Left, Bottom Right
+        {
+            degree = degree % 90;
+            x = 90-degree;
+            return new Vector2(x*.01f, (90-x)*.01f);
+        }
+        else                                                                                //Bottom Left, Top Right
+        {
+            degree = degree % 90;
+            x = 90-degree;
+            return new Vector2((90-x)*.01f, x*.01f);
+        }
+    }
+
+    public void mainEngine(ArrayList<SolarObject> planetList)
+    {
+        universalGravity(planetList);
+        applyForce(planetList);
+        projectFuturePosition(planetList, 500000);
+        positionRecorder(planetList);
+    }
+
+
     public void panCamera(ArrayList<SolarObject> planetList, int x, int y)
     {
         for(int i = 0; i < planetList.size(); i++)
@@ -54,13 +112,13 @@ public class Engine
 
     public void initializeSolarSystem(ArrayList<SolarObject> planetList)
     {
-        planetList.add(new SolarObject(100, new Vector2(600,450), new Vector2(0, 0), 30, new Color(.7f, .3f, 0, 1), "sun" ,true));
+        planetList.add(new SolarObject(100, new Vector2(600,450), new Vector2(0, 0), 30, new Color(1, 1, 1, 1), "sun" ,true));
         for (int i = 0; i < Math.random()*5;i++)
         {
             planetList.add(new SolarObject(15*Math.random(), new Vector2((float)(600*Math.random()+650),(float)(450)), new Vector2(0, (float)(-2-5*Math.random())), (float)(3*Math.random()+3), new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 1), "Planet: "+i ,false));
         }
-
     }
+
     public void fpsToConsole()
     {
         System.out.println("Current FPS: " + Gdx.graphics.getFramesPerSecond());
@@ -77,6 +135,7 @@ public class Engine
             }
         }
     }
+
     //Takes the current PlanetList
     //Uses the TempPlanetList Array to project the future positions of each planet and save them to the future position
     //of each planet
@@ -85,15 +144,10 @@ public class Engine
         ArrayList<SolarObject> tempPlanetList = deepCopySolarList(planetList);
         for(int i = 0; i < ticks; i++)
         {
-            universalGravity(tempPlanetList, true);
+            universalGravity(tempPlanetList);
             applyForce(tempPlanetList);
             for(int x = 0; x < tempPlanetList.size(); x++)
             {
-                if(!tempPlanetList.get(x).getStable())
-                {
-                    //System.out.println("Current " + tempPlanetList.get(x).getName() + " " + planetList.get(x).getPosition());
-                    //System.out.println("Projected " + tempPlanetList.get(x).getName() + " " + tempPlanetList.get(x).getPosition());
-                }
                 planetList.get(x).addProjectedPositions(tempPlanetList.get(x).getPosition().cpy());
             }
         }
@@ -102,22 +156,48 @@ public class Engine
     public ArrayList<SolarObject> deepCopySolarList(ArrayList<SolarObject> x)
     {
         ArrayList<SolarObject> copiedList = new ArrayList<>();
-
         for (SolarObject originalObject : x) {
             copiedList.add(originalObject.deepCopy());
         }
-
         return copiedList;
     }
+
     public ArrayList<Vector2> deepCopyVectorList(ArrayList<Vector2> x)
     {
         ArrayList<Vector2> copiedList = new ArrayList<>();
-
         for (Vector2 originalObject : x) {
             copiedList.add(originalObject.cpy());
         }
         return copiedList;
     }
+
+    public Vector2 simpleVectorMult(Vector2 vec1, Vector2 vec2)
+    {
+        return new Vector2(vec1.x*vec2.x,vec1.y*vec2.y);
+    }
+
+    public Vector2 thrustVec(float degree, float thrust)
+    {
+        degree = degreeCorrection(degree);
+        Vector2 vec1 = simpleVectorMult(findQuadrant(degree), findAngle(degree));
+        Vector2 vec2 = simpleVectorMult(vec1, new Vector2(thrust, thrust));
+        return new Vector2(vec2);
+    }
+
+    public int willCollide(SolarObject So1, SolarObject So2)
+    {
+        for (int i = 0; i < So1.getProjectedPositions().size(); i++)
+        {
+            if(So1.getProjectedPositions().get(i).dst(So1.getProjectedPositions().get(i)) > 300)
+            {
+                System.out.println("Collision Imminent in " + i + " ticks");
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
 
 
     public void applyForce(ArrayList<SolarObject> planetList)

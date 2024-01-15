@@ -21,6 +21,12 @@ public class SolarObject
     private ArrayList<Vector2> previousPositions = new ArrayList<Vector2>();
     private ArrayList<Vector2> projectedPositions = new ArrayList<Vector2>();
 
+    public float degree = 0;
+
+
+
+
+
 
 
 SolarObject(double massx, Vector2 positionx, Vector2 velocityx, float radiusx, Color colorx, String namex, boolean stablex)

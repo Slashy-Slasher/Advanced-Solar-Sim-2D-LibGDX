@@ -29,12 +29,9 @@ public class RendHelp
         shapeRenderer.setColor(x.getColor());
         for(int i = 1; i < projections.size(); i++)
         {
-            if(i % 3 == 1)
+            if(i % 6 == 1)
             {
-                if(i % 4 == 1)
-                {
                     shapeRenderer.line(projections.get(i-1), projections.get(i));
-                }
             }
         }
         shapeRenderer.end();
@@ -46,7 +43,6 @@ public class RendHelp
         for(int i = 1; i < x.getPreviousPositions().size(); i++)
         {
             shapeRenderer.line(x.getPreviousPositions().get(i-1), x.getPreviousPositions().get(i));
-            //System.out.println(x.getPreviousPositions().get(i-1));
         }
         shapeRenderer.end();
     }
