@@ -125,6 +125,11 @@ SolarObject(double massx, Vector2 positionx, Vector2 velocityx, float radiusx, C
         projectedPositions.add(getPosition());
         //System.out.println("Projection Cleared; current Length " + getProjectedPositions().size());
     }
+    public void clearProjectedPosition(int i)   //Used to Cull the projected positions post-collision
+    {
+        projectedPositions.subList(i, projectedPositions.size()).clear();
+        System.out.println("Project Positions of " + this.name + ": " + projectedPositions.size());
+    }
     public void addPreviousPositions(Vector2 newPosition)
     {
         previousPositions.add(newPosition.cpy());

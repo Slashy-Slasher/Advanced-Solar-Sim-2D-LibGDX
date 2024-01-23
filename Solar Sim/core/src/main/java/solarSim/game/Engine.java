@@ -97,7 +97,7 @@ public class Engine
     {
         universalGravity(planetList);
         applyForce(planetList);
-        projectFuturePosition(planetList, 500000);
+        projectFuturePosition(planetList, 5000);
         positionRecorder(planetList);
     }
 
@@ -175,6 +175,10 @@ public class Engine
     {
         return new Vector2(vec1.x*vec2.x,vec1.y*vec2.y);
     }
+    public Vector2 simpleVectorMult(Vector2 vec1, Vector2 vec2, int num)
+    {
+        return new Vector2(vec1.x*vec2.x*num,vec1.y*vec2.y*num);
+    }
 
     public Vector2 thrustVec(float degree, float thrust)
     {
@@ -184,20 +188,19 @@ public class Engine
         return new Vector2(vec2);
     }
 
-    public int willCollide(SolarObject So1, SolarObject So2)
+    public void willCollide(SolarObject So1, SolarObject So2)
     {
+
         for (int i = 0; i < So1.getProjectedPositions().size(); i++)
         {
-            if(So1.getProjectedPositions().get(i).dst(So1.getProjectedPositions().get(i)) > 300)
+            if(So1.getProjectedPositions().get(i).dst(So2.getProjectedPositions().get(i)) < So1.getRadius() + So2.getRadius())
             {
                 System.out.println("Collision Imminent in " + i + " ticks");
-                return i;
+                So1.clearProjectedPosition(i);
+                System.out.println("Post-Culled List Size(Supposed to be): " + So1.getProjectedPositions().size());
             }
         }
-        return -1;
     }
-
-
 
 
     public void applyForce(ArrayList<SolarObject> planetList)

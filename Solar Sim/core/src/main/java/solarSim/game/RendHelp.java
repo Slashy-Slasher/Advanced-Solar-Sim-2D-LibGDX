@@ -27,6 +27,7 @@ public class RendHelp
         shapeRenderer.begin(ShapeType.Line);
         //shapeRenderer.setColor(new Color(1f, 1f, 1f, 1));
         shapeRenderer.setColor(x.getColor());
+        System.out.println("Future Positions Drawn: " + projections.size());
         for(int i = 1; i < projections.size(); i++)
         {
             if(i % 6 == 1)

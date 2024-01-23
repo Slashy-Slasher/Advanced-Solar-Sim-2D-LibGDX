@@ -58,6 +58,9 @@ public class main extends ApplicationAdapter
         planetList.add(new SolarObject(15, new Vector2(12000,450), new Vector2(0, -250f), 3, new Color(1f, 1f, 1, 0), "ship" ,false));
         planetList.add(new SolarObject(1510*15, new Vector2(600,450), new Vector2(0, 0), 7000, new Color(1f, 1f, 0, 1), "sun" ,true));
 
+        //planetList.add(new SolarObject(10, new Vector2(1200,450), new Vector2(0, -20f), 3, new Color(1f, 1f, 1, 0), "ship" ,false));
+        //planetList.add(new SolarObject(100, new Vector2(0,450), new Vector2(0, 0), 70, new Color(1f, 0f, 0, 1), "planet" ,true));
+
         /*
         planetList.add(new SolarObject(15, new Vector2(9000600,450), new Vector2(0, -800f), 3, new Color(1f, 1f, 1, 0), "ship" ,false));
         planetList.add(new SolarObject(1*150, new Vector2(9000000,450), new Vector2(0, -800f), 300, new Color(1f, 0, 0, 1), "mars" ,false));
@@ -81,7 +84,6 @@ public class main extends ApplicationAdapter
 
 
         extendCam.position.set(0, 0,0);
-        shapeRenderer.setProjectionMatrix(extendCam.combined);
 
         extendCam.update();
 
@@ -109,9 +111,9 @@ public class main extends ApplicationAdapter
 
         batch.setProjectionMatrix(extendCam.combined);
         shapeRenderer.setProjectionMatrix(extendCam.combined);
+        engine.willCollide(planetList.get(0), planetList.get(1));
 
         rend.drawSolarSystem(planetList, shapeRenderer, false); //Draws planets
-
         batch.begin();
 
         font.draw(batch, engine.degreeCorrection(planetList.get(0).degree)+ "\n", 200, 200);
@@ -149,7 +151,7 @@ public class main extends ApplicationAdapter
         else if(Gdx.input.isKeyPressed(Input.Keys.V))
             cam.zoom = 10000f;
         else
-            cam.zoom = 1f;
+            cam.zoom = 3f;
     }
 
     @Override
