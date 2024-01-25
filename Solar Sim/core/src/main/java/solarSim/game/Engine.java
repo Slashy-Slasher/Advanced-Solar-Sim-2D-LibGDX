@@ -1,8 +1,11 @@
 package solarSim.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -93,10 +96,11 @@ public class Engine
         }
     }
 
-    public void mainEngine(ArrayList<SolarObject> planetList)
+    public void mainEngine(ArrayList<SolarObject> planetList, OrthographicCamera cam)
     {
         universalGravity(planetList);
         applyForce(planetList);
+        clickedSolarObject(planetList, cam);
         projectFuturePosition(planetList, 5000);
         positionRecorder(planetList);
     }
@@ -152,6 +156,40 @@ public class Engine
             }
         }
     }
+    public Vector2 getWorldPositionFromScreen(Vector3 v, OrthographicCamera cam)
+    {
+        Vector3 vc = cam.unproject(new Vector3(v.x,   v.y, v.z));
+        return new Vector2(vc.x, vc.y);
+    }
+    public void clickedSolarObject(ArrayList<SolarObject> planetList, OrthographicCamera cam)
+    {
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+        {
+            for(int i = 0; i < planetList.size(); i++)
+            {
+                //cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+                Vector2 mousePos = new Vector2(getWorldPositionFromScreen(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0), cam));
+                //System.out.println(planetList.get(i).getName() +" "+ planetList.get(i).getPosition() + " Distance from " + new Vector2(mousePos) + ": " + planetList.get(i).getPosition().dst(mousePos));
+                if(planetList.get(i).getRadius() > planetList.get(i).getPosition().dst(mousePos))
+                {
+                    System.out.println(planetList.get(i).getName() + " selected");
+                    for(int x = 0; x < planetList.size(); x++)
+                    {
+                        planetList.get(x).isSelected = false;
+                    }
+                    planetList.get(i).isSelected = true;
+                }
+            }
+        }
+        if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
+        {
+            for(int i = 0; i < planetList.size(); i++)
+            {
+                planetList.get(i).isSelected = false;
+            }
+        }
+    }
+
 
     public ArrayList<SolarObject> deepCopySolarList(ArrayList<SolarObject> x)
     {
@@ -190,19 +228,38 @@ public class Engine
 
     public void willCollide(SolarObject So1, SolarObject So2)
     {
-
         for (int i = 0; i < So1.getProjectedPositions().size(); i++)
         {
             if(So1.getProjectedPositions().get(i).dst(So2.getProjectedPositions().get(i)) < So1.getRadius() + So2.getRadius())
             {
-                System.out.println("Collision Imminent in " + i + " ticks");
+                //System.out.println("Collision Imminent in " + i + " ticks");
                 So1.clearProjectedPosition(i);
-                System.out.println("Post-Culled List Size(Supposed to be): " + So1.getProjectedPositions().size());
+                //System.out.println("Post-Culled List Size(Supposed to be): " + So1.getProjectedPositions().size());
             }
         }
     }
 
+    public void didCollide(SolarObject So1, SolarObject So2)    //Needs to intake an index for both planets, unless I add the index to the planet's class
+    {
+        if(So1.getMass() > So2.getMass())
+        {
+            So1.setMass(So1.getMass() + So2.getMass());
+            So1.setVelocity(So1.getVelocity().add(So2.getVelocity()));  //Prone to error, too tired to tell
+            //planetList.get("Index of So2").remove
+        }
+        else
+        {
+            So2.setMass(So1.getMass() + So2.getMass());
+            So2.setVelocity(So1.getVelocity().add(So2.getVelocity()));  //Prone to error, too tired to tell
+            //planetList.get("Index of So1").remove
+        }
+    }
 
+    public ArrayList<SolarObject> addSolarObject(ArrayList<SolarObject> planetList, double massx, Vector2 positionx, Vector2 velocityx, float radiusx, Color colorx, String namex, boolean stablex)
+    {
+        planetList.add(new SolarObject(massx, positionx, velocityx, radiusx, colorx, namex, stablex));
+        return planetList;
+    }
     public void applyForce(ArrayList<SolarObject> planetList)
     {
         for (int i = 0; i < planetList.size(); i++)

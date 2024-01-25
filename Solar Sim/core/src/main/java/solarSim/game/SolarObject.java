@@ -23,10 +23,7 @@ public class SolarObject
 
     public float degree = 0;
 
-
-
-
-
+    public boolean isSelected = false;
 
 
 SolarObject(double massx, Vector2 positionx, Vector2 velocityx, float radiusx, Color colorx, String namex, boolean stablex)
