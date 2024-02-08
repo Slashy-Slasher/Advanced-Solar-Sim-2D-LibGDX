@@ -14,10 +14,17 @@ Advanced Solar Sim 2D LibGDX
    Add screenshot of the projection
 
 
+
    **Planets**
 
    The ability to spawn planets in during runtime
 
    The ability to track where planets have been in the past, using a solid line of the same color
+
+   Selectable planets can be tracked using your ship's onboard computer, allowing the user to navigate to any planet in the solar system in a timely manner.
    
-   **
+   **Camera**
+
+   Pannable Camera based on the position of the ship
+
+   Also controllable through MOUSEBUTTON3, allowing for the user to smoothly pan to see far out planets
