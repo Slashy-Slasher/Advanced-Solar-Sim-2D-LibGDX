@@ -13,3 +13,11 @@ Advanced Solar Sim 2D LibGDX
 
    Add screenshot of the projection
 
+
+   **Planets**
+
+   The ability to spawn planets in during runtime
+
+   The ability to track where planets have been in the past, using a solid line of the same color
+   
+   **
