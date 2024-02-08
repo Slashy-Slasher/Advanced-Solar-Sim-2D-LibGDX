@@ -10,3 +10,6 @@ Advanced Solar Sim 2D LibGDX
 
    Collision impacts: Your ship's onboard computer can no predict where the ship is going to be based on it's current postion and the forces acting upon it!
    Optimized to prevent unwanted performance loss
+
+   Add screenshot of the projection
+
