@@ -1,7 +1,6 @@
 Advanced Solar Sim 2D LibGDX
 
 # Currently Implemented
-A library of statistics algorithms for final project
    
   **Space Ship:**
    
