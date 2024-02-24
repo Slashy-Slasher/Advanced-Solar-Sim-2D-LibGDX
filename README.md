@@ -1,5 +1,14 @@
 Advanced Solar Sim 2D LibGDX
 
+
+# What is this Project?
+
+   I've made several N-body simulations in the past, in a variety of different platforms, and many different languages, however I wanted to start again with all the knowledge and wisdom from my previous mistakes. I call this rendition of the project "Advanced" because it gives the user far, far more to work with than my other projects, controllable ships, projected velocities, and collision projections. 
+
+
+
+
+
 # Currently Implemented
    
   **Space Ship:**
